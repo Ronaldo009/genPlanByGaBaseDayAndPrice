@@ -45,12 +45,17 @@ arrivalRegionId_query=query_parse.arrivalRegionId_query
 departRegionId_query=query_parse.departRegionId_query
 
 days_aver=0
-if type(days_query)==int:
-    days_aver=days_query
-else:
-    days_aver=sum(days_query)/len(days_query)
-
-price_aver=sum(price_query)/len(price_query)
+if days_query:
+    if type(days_query)==int:
+        days_aver=days_query
+    else:
+        days_aver=sum(days_query)/len(days_query)
+price_aver=0
+if price_query:
+    if type(price_query)==int:
+        price_aver=price_query
+    else:
+        price_aver=sum(price_query)/len(price_query)
 
 
 
@@ -83,40 +88,70 @@ class genPlanByGa(object):
         self.lifeCount = lifeCount
         self.ga = GA(mutationRate=0.9,
                      lifeCount=self.lifeCount,
-                     days=days_query,
-                     price=price_query,
+                     days=days_aver,
+                     price=price_aver,
                      matchFun=self.matchFun())
 
 
 
     def Asymptotion(self,order):
         result=self.getPriceAndDays(order)
-        if abs(result['days']-days_aver)>5 and abs(result['days']-days_aver)<=7:
-            k1=0.1
-        elif abs(result['days']-days_aver)>3 and abs(result['days']-days_aver)<=5:
-            k1=0.2
-        elif abs(result['days']-days_aver)>2 and abs(result['days']-days_aver)<=3:
-            k1=0.3
-        elif abs(result['days']-days_aver)>1 and abs(result['days']-days_aver)<=2:
-            k1=0.4
-        elif abs(result['days']-days_aver)<=1:
-            k1=0.5
+        k1=100
+        k2=100
+        if days_aver!=0:
+            if result['days'] - days_aver>0:
+                if (result['days'] - days_aver) > 7 and (result['days'] - days_aver) <= 8:
+                    k1=5
+                elif (result['days'] - days_aver) > 6 and (result['days'] - days_aver) <= 7:
+                    k1 = 4
+                elif (result['days'] - days_aver) > 4 and (result['days'] - days_aver) <= 6:
+                    k1 = 3
+                elif (result['days'] - days_aver) > 2 and (result['days'] - days_aver) <= 4:
+                    k1 = 2
+                elif result['days'] - days_aver <= 2:
+                    k1 = 1
+            if days_aver-result['days']>0:
+                if days_aver-result['days']>7 and days_aver-result['days']<=8:
+                    k1=-5
+                if days_aver-result['days']>6 and days_aver-result['days']<=7:
+                    k1=-4
+                if days_aver-result['days']>4 and days_aver-result['days']<=6:
+                    k1=-3
+                if days_aver-result['days']>2 and days_aver-result['days']<=4:
+                    k1=-2
+                if days_aver-result['days']<=2:
+                    k1=-1
         else:
-            k1=0
-        if abs(result['price']-price_aver)>10000 and abs(result['price']-price_aver)<=15000:
-            k2=0.1
-        elif abs(result['price']-price_aver)>5000 and abs(result['price']-price_aver)<=10000:
-            k2=0.2
-        elif abs(result['price']-price_aver)>3000 and abs(result['price']-price_aver)<=5000:
-            k2=0.3
-        elif abs(result['price']-price_aver)>1000 and abs(result['price']-price_aver)<=3000:
-            k2=0.4
-        elif abs(result['price']-price_aver)<=1000:
-            k2=0.5
-        else:
-            k2=0
+            k1=1
 
-        return k1*100,k2*100
+        if price_aver!=0:
+            if (result['price'] - price_aver) > 0:
+                if (result['price']-price_aver)>4000 and (result['price']-price_aver)<=8000:
+                    k2=5
+                elif (result['price']-price_aver)>2200 and (result['price']-price_aver)<=4000:
+                    k2=4
+                elif (result['price']-price_aver)>1500 and (result['price']-price_aver)<=2200:
+                    k2=3
+                elif (result['price']-price_aver)>800 and (result['price']-price_aver)<=1500:
+                    k2=2
+                elif (result['price']-price_aver)<=800:
+                    k2=1
+            if (price_aver-result['price']) > 0:
+                if (price_aver-result['price']) > 4000 and (price_aver-result['price']) <= 8000:
+                    k2 = -5
+                elif (price_aver-result['price']) > 2200 and (price_aver-result['price']) <= 4000:
+                    k2 = -4
+                elif (price_aver-result['price']) > 1500 and (price_aver-result['price']) <= 2200:
+                    k2 = -3
+                elif (price_aver-result['price']) > 800 and (price_aver-result['price']) <= 1500:
+                    k2 = -2
+                elif (price_aver-result['price']) <= 800:
+                    k2 =- 1
+
+        else:
+            k2=1
+
+        return 1/(k1),1/(k2),result['days'],result['price']
 
 
 
@@ -253,31 +288,41 @@ class genPlanByGa(object):
                 'available_months': available_months
                 }
 
+
+
+
+
     def querySatisfied(self,result):
         if days_query:
             if type(days_query)==list:
-                if result['days'] not in days_query:
+                if result['days'] <days_query[0] or result["days"]>days_query[-1]:
+                    print(result['days'])
                     return False
             if type(days_query)==int:
                 if result['days']!=days_query:
                     return False
         if price_query:
             if result['price'] > price_query[1] or result['price'] <price_query[0]:
+                print("price")
                 return False
         if pois_query:
-            if list(set(pois_query).intersection(set(result['poi_ids'])))!=pois_query:
+            if set(pois_query)-set(result['poi_ids']):
+                print("pois")
                 return False
         if regions_query:
             regionsMapInGenPlan ={x['region_id']:x['days'] for x in result['tour_regions']}
 
             regionsMapInQuery = {x['region_id']:x['day'] for x in regions_query}
             if set(regionsMapInQuery.keys()) - set(regionsMapInGenPlan.keys()):
+                print("regionDays")
                 return False
             for regionId, days in regionsMapInQuery.items():
                 if days and regionsMapInGenPlan[regionId] != days:
+                    print("regionDays")
                     return False
         if regionNotGo_query:
             if set(result['region_ids']) & set(regionNotGo_query):
+                print("region_ids")
                 return False
         if poiNotGo_query:
             if set(result['poi_ids']) & set(poiNotGo_query):
@@ -296,8 +341,10 @@ class genPlanByGa(object):
                 return False
 
         if result['hotel_poi_number']==0:
+            print("hotel")
             return False
         if result['rental_car_pois']%2!=0:
+            print("carRental")
             return False
         depuPoi=[]
         if len(set(result['poi_ids']))!=len(result['poi_ids']):
@@ -365,21 +412,29 @@ class genPlanByGa(object):
         resultMD5=[]
         while n>0:
             self.ga.next()
-            score=self.Asymptotion(self.ga.best.gene)
-            print(("%d,%d")%(self.ga.generation,score))
-            result.append(self.ga.best.gene)
+            # score=self.Asymptotion(self.ga.best.gene)
+            # print(("%d,%d")%(self.ga.generation,score))
+            for i in self.ga.bests:
+                if i not in result:
+                    result.append(i.gene)
+            result.sort()
+            result=list(result for result,_ in itertools.groupby(result))
             n=n-1
+        for i in result:
+            pathDetail = self.getPathDetail(i)
+            if self.querySatisfied(pathDetail):
+                resultMD5.append(i)
         end=time.clock()
         runtime=end-start
-        return result,runtime
+        return resultMD5,runtime
 
 
 if __name__ == '__main__':
-    iterNums=100
+    iterNums=50
     gpGa=genPlanByGa()
     result,runtime=gpGa.run(iterNums)
     for i,items in enumerate(result):
-        print(i,items)
+            print(i,items)
     print("共用时"+str(("%.2f")%(runtime))+"秒")
 
 

@@ -7,6 +7,7 @@
 # @Software: PyCharm
 
 class Gene(object):
-    def __init__(self,days,price):
-        self.days=days
+    def __init__(self,Id,day,price):
+        self.part=Id
+        self.day=day
         self.price=price

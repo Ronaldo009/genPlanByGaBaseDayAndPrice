@@ -6,6 +6,7 @@
 # @File    : test.py
 # @Software: PyCharm
 import random
+from Gene import Gene
 GIVEN_QUERY = {'days': [4,14], 'countries': [{'country_id': 28, 'day': None}],
     'regions': [{'region_id': 2, 'day': None}, {'region_id': 27, 'day': 1}, {'region_id': 69, 'day': None}], 'pois': [],
     'regionNotGo': [], 'poiNotGo': [], 'regionSorted': [135, 131], 'availableMonths': [1,2,3,4,5,6,7,8,9,10],
@@ -28,24 +29,23 @@ if (set(regionsMapInQuery.keys()) - set(regionsMapInGenPlan.keys())):
 
 print(regionsMapInQuery.items())
 print(regionsMapInGenPlan.items())
+a=[1,2,3]
+c={1:11,2:22,3:33}
+f={1:22,2:33,3:11}
+b=[]
+for gene in a:
+    genea=Gene(gene,c[gene],f[gene])
+    b.append(genea)
 
-a=[1,2,0,4,5]
-b=[11,22,33,44]
-c=99
-f=[]
-g=[]
-flag=True
-while flag:
-    try:
-        flag=False
+d=[]
+for i in b:
+    d.append((i.part,b.index(i),i.price,i.day))
 
-        f.append(c/a[1])
-    except:
-        print("ass")
-        flag=True
-print(f)
+print(d)
+ss=sorted(d,key=lambda a_tup:a_tup[2])
 
-cc=7
-if cc<10:
-    k=1
-elif cc<8:
+print(ss)
+from operator import itemgetter, attrgetter
+dd=sorted(d, key=itemgetter(3))
+print(dd)
+

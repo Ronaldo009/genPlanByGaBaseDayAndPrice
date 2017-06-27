@@ -11,13 +11,13 @@ import copy
 import time
 
 
-GIVEN_QUERY = {'days': [10,12,13,14], 'countries': [{'country_id': 28, 'day': None}],
-    'regions': [{'region_id': 2, 'day': None}, {'region_id': 27, 'day': None}, {'region_id': 69, 'day': None}], 'pois': [],
-    'regionNotGo': [], 'poiNotGo': [], 'regionSorted': [135, 131], 'availableMonths': [1,2,3,4,5,6,7,8,9,10],
-    'price': [0, 80000], 'hotelRating': None, 'arrivalRegionId': 27, 'departRegionId': None}
+# GIVEN_QUERY = {'days': [10,12,13,14], 'countries': [{'country_id': 28, 'day': None}],
+#     'regions': [{'region_id': 2, 'day': None}, {'region_id': 27, 'day': None}, {'region_id': 69, 'day': None}], 'pois': [],
+#     'regionNotGo': [], 'poiNotGo': [], 'regionSorted': [135, 131], 'availableMonths': [1,2,3,4,5,6,7,8,9,10],
+#     'price': [5000, 15000], 'hotelRating': None, 'arrivalRegionId': 27, 'departRegionId': None}
 
-# GIVEN_QUERY={'days': [10], 'countries': [{'country_id': 11, 'day': None}], 'regions': [{'region_id': 266, 'day': None},
-#         {'region_id': 220, 'day': None}, {'region_id': 2141}], 'pois': [795, 800, 878, 1536, 1679, 2400, 2502, 3472, 7305, 13850, 14817, 15390, 15582, 16848]}
+GIVEN_QUERY={'days': [10,12,13], 'countries': [{'country_id': 11, 'day': None}], 'regions': [{'region_id': 266, 'day': None},
+        {'region_id': 220, 'day': None}, {'region_id': 2141}], 'pois': [795, 800]}
 
 # GIVEN_QUERY={'days': [12], 'countries': [{'country_id': 28, 'day': None}],
 #              'regions': [{'region_id': 2, 'day': None}, {'region_id': 70, 'day': None}, {'region_id': 69, 'day': None}, {'region_id': 27, 'day': None}, {'region_id': 79, 'day': None}],
